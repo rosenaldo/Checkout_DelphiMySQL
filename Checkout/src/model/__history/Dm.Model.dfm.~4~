@@ -1,0 +1,28 @@
+object DataModule1: TDataModule1
+  OldCreateOrder = False
+  Height = 528
+  Width = 728
+  object FDConnection: TFDConnection
+    Params.Strings = (
+      'Database=PDV'
+      'User_Name=root'
+      'DriverID=MySQL')
+    LoginPrompt = False
+    Left = 40
+    Top = 24
+  end
+  object FDT_CARGOS: TFDTable
+    Connection = FDConnection
+    Left = 32
+    Top = 152
+  end
+  object FDQ_CARGOS: TFDQuery
+    Connection = FDConnection
+    Left = 32
+    Top = 224
+  end
+  object DS_CARGOS: TDataSource
+    Left = 32
+    Top = 304
+  end
+end

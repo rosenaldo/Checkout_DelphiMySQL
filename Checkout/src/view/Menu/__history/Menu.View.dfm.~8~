@@ -1,0 +1,21 @@
+object FRM_MENU: TFRM_MENU
+  Left = 0
+  Top = 0
+  ClientHeight = 522
+  ClientWidth = 789
+  Color = clWhite
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Menu = Menu
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Menu: TMainMenu
+    Left = 24
+    Top = 48
+  end
+end
