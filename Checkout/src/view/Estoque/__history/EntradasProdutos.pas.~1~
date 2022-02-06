@@ -1,0 +1,345 @@
+unit EntradasProdutos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ComCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+
+type
+  TFrmEntradaProdutos = class(TForm)
+    Label2: TLabel;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    Label1: TLabel;
+    btnBuscarPro: TSpeedButton;
+    Label3: TLabel;
+    EdtProduto: TEdit;
+    DBGrid1: TDBGrid;
+    edtQuantidade: TEdit;
+    Label4: TLabel;
+    edtValor: TEdit;
+    edtFornecedor: TEdit;
+    btnBuscarForn: TSpeedButton;
+    Label5: TLabel;
+    dataBuscar: TDateTimePicker;
+    lblTotal: TLabel;
+    P_CONTAINER: TPanel;
+    P_TOPO: TPanel;
+    P_GRID: TPanel;
+    P_RODAPE: TPanel;
+    SB_CANCELAR: TSpeedButton;
+    procedure FormShow(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnBuscarProClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnBuscarFornClick(Sender: TObject);
+    procedure edtQuantidadeChange(Sender: TObject);
+    procedure edtValorChange(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumn);
+    procedure BtnExcluirClick(Sender: TObject);
+    procedure dataBuscarChange(Sender: TObject);
+    procedure SB_CANCELARClick(Sender: TObject);
+  private
+    { Private declarations }
+
+    procedure limpar;
+    procedure habilitarCampos;
+    procedure desabilitarCampos;
+
+    procedure associarCampos;
+    procedure listar;
+    procedure buscarData;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmEntradaProdutos: TFrmEntradaProdutos;
+  total: double;
+  estoque: double;
+  idProdutoEst: string;
+  idEntrada: string;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo, Produtos, Fornecedores;
+
+procedure TFrmEntradaProdutos.associarCampos;
+begin
+  dm.tb_entrada_pro.FieldByName('produto').Value := EdtProduto.Text;
+  dm.tb_entrada_pro.FieldByName('quantidade').Value := edtQuantidade.Text;
+  dm.tb_entrada_pro.FieldByName('fornecedor').Value := idFornecedor;
+  dm.tb_entrada_pro.FieldByName('valor').Value := edtValor.Text;
+  dm.tb_entrada_pro.FieldByName('total').Value := total;
+  dm.tb_entrada_pro.FieldByName('data').Value := DateToStr(Date);
+  dm.tb_entrada_pro.FieldByName('id_produto').Value := idProduto;
+end;
+
+procedure TFrmEntradaProdutos.btnBuscarFornClick(Sender: TObject);
+begin
+  chamada := 'Forn';
+  FrmFornecedores := TFrmFornecedores.Create(self);
+  FrmFornecedores.Show;
+end;
+
+procedure TFrmEntradaProdutos.btnBuscarProClick(Sender: TObject);
+begin
+  chamada := 'Prod';
+  FrmProdutos := TFrmProdutos.Create(self);
+  FrmProdutos.Show;
+end;
+
+procedure TFrmEntradaProdutos.BtnExcluirClick(Sender: TObject);
+begin
+  if MessageDlg('Deseja Excluir o registro?', mtConfirmation, [mbYes, mbNo], 0)
+    = mrYes then
+  begin
+    dm.tb_entrada_pro.Delete;
+
+
+    // ATUALIZAR O ESTOQUE
+
+    // RECUPERAR O ESTOQUE ATUAL
+    dm.query_produtos.Close;
+    dm.query_produtos.SQL.Clear;
+    dm.query_produtos.SQL.Add('select * from produtos where id = :id');
+
+    dm.query_produtos.ParamByName('id').Value := idProdutoEst;
+    dm.query_produtos.Open;
+
+    if not dm.query_produtos.isEmpty then
+    begin
+      estoqueProduto := dm.query_produtos['estoque'];
+
+    end;
+
+    estoque := estoqueProduto - strToFloat(edtQuantidade.Text);
+
+    dm.query_produtos.Close;
+    dm.query_produtos.SQL.Clear;
+    dm.query_produtos.SQL.Add
+      ('UPDATE produtos set estoque = :estoque where id = :id');
+    dm.query_produtos.ParamByName('estoque').Value := estoque;
+    dm.query_produtos.ParamByName('id').Value := idProduto;
+    dm.query_produtos.ExecSQL;
+
+    MessageDlg('Deletado com Sucesso!!', mtInformation, mbOKCancel, 0);
+
+    listar;
+
+    BtnExcluir.Enabled := false;
+
+  end;
+end;
+
+procedure TFrmEntradaProdutos.btnNovoClick(Sender: TObject);
+begin
+  habilitarCampos;
+  dm.tb_entrada_pro.Insert;
+  btnSalvar.Enabled := true;
+
+end;
+
+procedure TFrmEntradaProdutos.btnSalvarClick(Sender: TObject);
+begin
+  if Trim(EdtProduto.Text) = '' then
+  begin
+    MessageDlg('Escolha um Produto!', mtInformation, mbOKCancel, 0);
+
+    exit;
+  end;
+
+  if Trim(edtFornecedor.Text) = '' then
+  begin
+    MessageDlg('Escolha um Produto!', mtInformation, mbOKCancel, 0);
+
+    exit;
+  end;
+
+  if (Trim(edtValor.Text) = '0') or (Trim(edtValor.Text) = '') then
+  begin
+    MessageDlg('Insira um valor!', mtInformation, mbOKCancel, 0);
+    edtValor.SetFocus;
+    exit;
+  end;
+
+  associarCampos;
+  dm.tb_entrada_pro.Post;
+
+  // ATUALIZAR O ESTOQUE e DATA DA ULTIMA COMPRA  e ADICIONAR OS PRODUTOS COMPRADOS AO ESTOQUE
+
+  estoque := estoqueProduto + strToFloat(edtQuantidade.Text);
+
+  dm.query_produtos.Close;
+  dm.query_produtos.SQL.Clear;
+  dm.query_produtos.SQL.Add
+    ('UPDATE produtos set estoque = :estoque, ultima_compra = :data where id = :id');
+  dm.query_produtos.ParamByName('estoque').Value := estoque;
+  dm.query_produtos.ParamByName('data').Value := Date;
+  dm.query_produtos.ParamByName('id').Value := idProduto;
+  dm.query_produtos.ExecSQL;
+
+  // RECUPERAR O ID DA ULTIMA COMPRA INSERIDA
+  dm.query_coringa.Close;
+  dm.query_coringa.SQL.Clear;
+  dm.query_coringa.SQL.Add('SELECT * from entrada_produtos order by id desc');
+
+  dm.query_coringa.Open;
+
+  if not dm.query_coringa.isEmpty then
+  begin
+    idEntrada := dm.query_coringa['id'];
+  end;
+
+  // LANÇAR O VALOR  NAS MOVIMENTAÇÕES
+  dm.query_mov.Close;
+  dm.query_mov.SQL.Clear;
+  dm.query_mov.SQL.Add
+    ('INSERT INTO movimentacoes (tipo, movimento, valor, funcionario, data, id_movimento) VALUES (:tipo, :movimento, :valor, :funcionario, curDate(), :id_movimento)');
+  dm.query_mov.ParamByName('tipo').Value := 'Saída';
+  dm.query_mov.ParamByName('movimento').Value := 'Compra de Produtos';
+  dm.query_mov.ParamByName('valor').Value := total;
+  dm.query_mov.ParamByName('funcionario').Value := nomeUsuario;
+  dm.query_mov.ParamByName('id_movimento').Value := idEntrada;
+  dm.query_mov.ExecSQL;
+
+  MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+  limpar;
+  desabilitarCampos;
+  btnSalvar.Enabled := false;
+  listar;
+
+end;
+
+procedure TFrmEntradaProdutos.buscarData;
+begin
+  dm.query_entrada_pro.Close;
+  dm.query_entrada_pro.SQL.Clear;
+  dm.query_entrada_pro.SQL.Add
+    ('SELECT e.id, e.produto, e.quantidade, e.fornecedor, e.valor, e.total, e.data, e.id_produto, f.nome, f.telefone from entrada_produtos as e INNER JOIN fornecedores as f on e.fornecedor = f.id where e.data = :data order by e.data desc');
+  dm.query_entrada_pro.ParamByName('data').Value :=
+    FormatDateTime('yyyy/mm/dd', dataBuscar.Date);
+  dm.query_entrada_pro.Open;
+end;
+
+procedure TFrmEntradaProdutos.dataBuscarChange(Sender: TObject);
+begin
+  buscarData;
+end;
+
+procedure TFrmEntradaProdutos.DBGrid1CellClick(Column: TColumn);
+begin
+
+  BtnExcluir.Enabled := true;
+
+  EdtProduto.Text := dm.query_entrada_pro.FieldByName('produto').Value;
+
+  edtFornecedor.Text := dm.query_entrada_pro.FieldByName('id').Value;
+  edtValor.Text := dm.query_entrada_pro.FieldByName('valor').Value;
+  edtQuantidade.Text := dm.query_entrada_pro.FieldByName('quantidade').Value;
+
+  id := dm.query_entrada_pro.FieldByName('id').Value;
+  idProdutoEst := dm.query_entrada_pro.FieldByName('id_produto').Value;
+
+  total := dm.query_entrada_pro.FieldByName('total').Value;
+  lblTotal.Caption := FormatFloat('R$ #,,,,0.00',
+    dm.query_entrada_pro.FieldByName('total').Value);
+
+end;
+
+procedure TFrmEntradaProdutos.desabilitarCampos;
+begin
+
+  edtValor.Enabled := false;
+  edtQuantidade.Enabled := false;
+  btnBuscarPro.Enabled := false;
+  btnBuscarForn.Enabled := false;
+end;
+
+procedure TFrmEntradaProdutos.edtQuantidadeChange(Sender: TObject);
+begin
+  if edtQuantidade.Text <> '' then
+  begin
+    total := strToFloat(edtQuantidade.Text) * strToFloat(edtValor.Text);
+    lblTotal.Caption := FormatFloat('R$ #,,,,0.00', total);
+  end;
+end;
+
+procedure TFrmEntradaProdutos.edtValorChange(Sender: TObject);
+begin
+  if edtValor.Text <> '' then
+  begin
+    total := strToFloat(edtQuantidade.Text) * strToFloat(edtValor.Text);
+    lblTotal.Caption := FormatFloat('R$ #,,,,0.00', total);
+  end;
+end;
+
+procedure TFrmEntradaProdutos.FormActivate(Sender: TObject);
+begin
+  EdtProduto.Text := nomeProduto;
+  edtFornecedor.Text := nomeFornecedor;
+end;
+
+procedure TFrmEntradaProdutos.FormShow(Sender: TObject);
+begin
+
+  if chamada = 'Ent' then
+  BEGIN
+    habilitarCampos;
+    dm.tb_entrada_pro.Active := true;
+    dm.tb_entrada_pro.Insert;
+    btnSalvar.Enabled := true;
+  end
+  else
+  begin
+    desabilitarCampos;
+    dm.tb_entrada_pro.Active := true;
+  END;
+
+  // listar;
+  dataBuscar.Date := Date;
+  buscarData;
+
+end;
+
+procedure TFrmEntradaProdutos.habilitarCampos;
+begin
+  edtValor.Enabled := true;
+  edtQuantidade.Enabled := true;
+  btnBuscarPro.Enabled := true;
+  btnBuscarForn.Enabled := true;
+end;
+
+procedure TFrmEntradaProdutos.limpar;
+begin
+  edtValor.Text := '0';
+  edtQuantidade.Text := '1';
+  EdtProduto.Text := '';
+  edtFornecedor.Text := '';
+  lblTotal.Caption := '0';
+  total := 0;
+  estoque := 0;
+end;
+
+procedure TFrmEntradaProdutos.listar;
+begin
+  dm.query_entrada_pro.Close;
+  dm.query_entrada_pro.SQL.Clear;
+  dm.query_entrada_pro.SQL.Add
+    ('SELECT e.id, e.produto, e.quantidade, e.fornecedor, e.valor, e.total, e.data, e.id_produto, f.nome, f.telefone from entrada_produtos as e INNER JOIN fornecedores as f on e.fornecedor = f.id order by e.data desc');
+  dm.query_entrada_pro.Open;
+end;
+
+procedure TFrmEntradaProdutos.SB_CANCELARClick(Sender: TObject);
+begin
+  Close;
+end;
+
+end.

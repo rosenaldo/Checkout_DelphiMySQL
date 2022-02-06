@@ -1,0 +1,45 @@
+unit Login.Wiew;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.Imaging.pngimage, Vcl.ExtCtrls;
+
+type
+  TFRM_LOGIN = class(TForm)
+    P_CONTAINER: TPanel;
+    P_LOGO: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Image1: TImage;
+    Label7: TLabel;
+    Label6: TLabel;
+    Label8: TLabel;
+    P_LOGIN: TPanel;
+    Label3: TLabel;
+    btnLogin: TSpeedButton;
+    SB_SAIR: TSpeedButton;
+    P_SENHA: TPanel;
+    Label5: TLabel;
+    EdtSenha: TEdit;
+    Panel2: TPanel;
+    P_USUARIO: TPanel;
+    Label4: TLabel;
+    EdtUsuario: TEdit;
+    Panel1: TPanel;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FRM_LOGIN: TFRM_LOGIN;
+
+implementation
+
+{$R *.dfm}
+
+end.

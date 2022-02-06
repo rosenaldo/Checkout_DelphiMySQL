@@ -1,0 +1,16 @@
+program Project;
+
+uses
+  Vcl.Forms,
+  Login.Wiew in 'src\view\Login\Login.Wiew.pas' {FRM_LOGIN},
+  Menu.View in 'src\view\Menu\Menu.View.pas' {FRM_MENU};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFRM_LOGIN, FRM_LOGIN);
+  Application.CreateForm(TFRM_MENU, FRM_MENU);
+  Application.Run;
+end.

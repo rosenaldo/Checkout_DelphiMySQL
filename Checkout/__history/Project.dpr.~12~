@@ -2,56 +2,15 @@ program Project;
 
 uses
   Vcl.Forms,
-  DM.Model in 'src\model\DM.Model.pas' {Model: TDataModule},
-  Login in 'src\view\Login\Login.pas' {FrmLogin},
-  Menu in 'src\view\Menu\Menu.pas' {FrmMenu},
-  Empresa in 'src\view\Cadastros\Empresa.pas' {FRM_EMPRESA},
-  Cargos in 'src\view\Cadastros\Cargos.pas' {FrmCargos},
-  Fornecedores in 'src\view\Cadastros\Fornecedores.pas' {FrmFornecedores},
-  Funcionarios in 'src\view\Cadastros\Funcionarios.pas' {FrmFuncionarios},
-  Produtos in 'src\view\Cadastros\Produtos.pas' {FrmProdutos},
-  Usuarios in 'src\view\Cadastros\Usuarios.pas' {FrmUsuarios},
-  ImprimirBarras in 'src\view\Ferramentas\ImprimirBarras.pas' {FrmImprimirBarras},
-  EntradasProdutos in 'src\view\Estoque\EntradasProdutos.pas' {FrmEntradaProdutos},
-  EstoqueBaixo in 'src\view\Estoque\EstoqueBaixo.pas' {FrmEstoqueBaixo},
-  SaidasProdutos in 'src\view\Estoque\SaidasProdutos.pas' {FrmSaidaProdutos},
-  GerarOS.View in 'src\view\Movimentacoes\GerarOS.View.pas' {FRM_ADD_OS},
-  OrdemDeServico.View in 'src\view\Movimentacoes\OrdemDeServico.View.pas' {FRM_OS},
-  Caixa in 'src\view\Movimentacoes\Caixa.pas' {FrmCaixa},
-  CancelarItem in 'src\view\Movimentacoes\CancelarItem.pas' {FrmCancelarItem},
-  FluxoCaixa in 'src\view\Movimentacoes\FluxoCaixa.pas' {FrmFluxoCaixa},
-  Gastos in 'src\view\Movimentacoes\Gastos.pas' {FrmGastos},
-  ListaVendas in 'src\view\Movimentacoes\ListaVendas.pas' {FrmListaVendas},
-  Movimentacoes in 'src\view\Movimentacoes\Movimentacoes.pas' {FrmMovimentacoes},
-  Vendas in 'src\view\Movimentacoes\Vendas.pas' {FrmVendas};
+  modulo in 'src\model\modulo.pas' {dm: TDataModule},
+  Usuarios in 'src\view\Cadastros\Usuarios.pas' {Form1};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TModel, Model);
-  Application.CreateForm(TFrmLogin, FrmLogin);
-  Application.CreateForm(TFrmMenu, FrmMenu);
-  Application.CreateForm(TFRM_EMPRESA, FRM_EMPRESA);
-  Application.CreateForm(TFrmCargos, FrmCargos);
-  Application.CreateForm(TFrmFornecedores, FrmFornecedores);
-  Application.CreateForm(TFrmFuncionarios, FrmFuncionarios);
-  Application.CreateForm(TFrmProdutos, FrmProdutos);
-  Application.CreateForm(TFrmProdutos, FrmProdutos);
-  Application.CreateForm(TFrmUsuarios, FrmUsuarios);
-  Application.CreateForm(TFrmImprimirBarras, FrmImprimirBarras);
-  Application.CreateForm(TFrmEntradaProdutos, FrmEntradaProdutos);
-  Application.CreateForm(TFrmEstoqueBaixo, FrmEstoqueBaixo);
-  Application.CreateForm(TFrmSaidaProdutos, FrmSaidaProdutos);
-  Application.CreateForm(TFRM_ADD_OS, FRM_ADD_OS);
-  Application.CreateForm(TFRM_OS, FRM_OS);
-  Application.CreateForm(TFrmCaixa, FrmCaixa);
-  Application.CreateForm(TFrmCancelarItem, FrmCancelarItem);
-  Application.CreateForm(TFrmFluxoCaixa, FrmFluxoCaixa);
-  Application.CreateForm(TFrmGastos, FrmGastos);
-  Application.CreateForm(TFrmListaVendas, FrmListaVendas);
-  Application.CreateForm(TFrmMovimentacoes, FrmMovimentacoes);
-  Application.CreateForm(TFrmVendas, FrmVendas);
+  Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

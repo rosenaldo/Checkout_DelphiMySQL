@@ -1,0 +1,35 @@
+program Project;
+
+uses
+  Vcl.Forms,
+  DM.Model in 'model\DM.Model.pas' {Model: TDataModule},
+  Cargos in 'view\Cadastros\Cargos.pas' {FrmCargos},
+  Usuarios in 'view\Cadastros\Usuarios.pas' {FrmUsuarios},
+  Funcionarios in 'view\Cadastros\Funcionarios.pas' {FrmFuncionarios},
+  Empresa in 'view\Cadastros\Empresa.pas' {FRM_EMPRESA},
+  Fornecedores in 'view\Cadastros\Fornecedores.pas' {FrmFornecedores},
+  Produtos in 'view\Cadastros\Produtos.pas' {FrmProdutos},
+  EntradasProdutos in 'view\Estoque\EntradasProdutos.pas' {FrmEntradaProdutos},
+  EstoqueBaixo in 'view\Estoque\EstoqueBaixo.pas' {FrmEstoqueBaixo},
+  SaidasProdutos in 'view\Estoque\SaidasProdutos.pas' {FrmSaidaProdutos},
+  ExcluirDados in 'view\Ferramentas\ExcluirDados.pas' {FrmExcluirDados},
+  Caixa in 'view\Movimentacoes\Caixa.pas' {FrmCaixa},
+  Vendas in 'view\Movimentacoes\Vendas.pas' {FrmVendas},
+  CancelarItem in 'view\Movimentacoes\CancelarItem.pas' {FrmCancelarItem},
+  CertificadoDigital in 'view\Ferramentas\CertificadoDigital.pas' {FrmCertificado},
+  ImprimirBarras in 'view\Ferramentas\ImprimirBarras.pas' {FrmImprimirBarras};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TModel, Model);
+  Application.CreateForm(TFrmCargos, FrmCargos);
+  Application.CreateForm(TFrmCaixa, FrmCaixa);
+  Application.CreateForm(TFrmVendas, FrmVendas);
+  Application.CreateForm(TFrmCancelarItem, FrmCancelarItem);
+  Application.CreateForm(TFrmCertificado, FrmCertificado);
+  Application.CreateForm(TFrmImprimirBarras, FrmImprimirBarras);
+  Application.Run;
+end.

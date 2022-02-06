@@ -1,0 +1,59 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 331
+  ClientWidth = 716
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object EdtNome: TEdit
+    Left = 30
+    Top = 85
+    Width = 179
+    Height = 21
+    Enabled = False
+    TabOrder = 0
+  end
+  object edtUsuario: TEdit
+    Left = 304
+    Top = 85
+    Width = 169
+    Height = 21
+    Enabled = False
+    TabOrder = 1
+  end
+  object edtSenha: TEdit
+    Left = 524
+    Top = 85
+    Width = 110
+    Height = 21
+    Enabled = False
+    TabOrder = 2
+  end
+  object EdtBuscarNome: TEdit
+    Left = 524
+    Top = 30
+    Width = 110
+    Height = 21
+    TabOrder = 3
+  end
+  object DBGrid1: TDBGrid
+    Left = 56
+    Top = 144
+    Width = 545
+    Height = 145
+    TabOrder = 4
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+  end
+end
